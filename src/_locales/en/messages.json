@@ -3,28 +3,16 @@
   "message": "Dark Reader 3-Finger Toggle"
  },
  "extDesc": {
-  "message": "Turn Dark Reader off/on for the current page with a three-finger tap (Firefox for Android and touch-screen desktops)."
- },
- "title": {
-  "message": "Three-finger tap"
- },
- "actionLegend": {
-  "message": "Three-finger tap action"
- },
- "actionToggle": {
-  "message": "Toggle Dark Reader"
- },
- "actionReload": {
-  "message": "Reload page"
+  "message": "Keeps Dark Reader off by default; a three-finger tap turns it on for the current page (Firefox for Android and touch-screen desktops)."
  },
  "rememberLabel": {
-  "message": "Remember sites I turn off (stay off next time)"
+  "message": "Remember sites I turn on (stay dark next time)"
  },
  "rememberHint": {
-  "message": "When unchecked: off only while this site is open in this tab (stays off across reloads and in-site navigation)."
+  "message": "When unchecked: a page you turn on stays dark only while that site is open in this tab (across reloads and in-site navigation). Tap again with three fingers to turn it off."
  },
  "sitesLegend": {
-  "message": "Sites kept off"
+  "message": "Sites kept dark"
  },
  "sitesEmpty": {
   "message": "(none)"
@@ -33,24 +21,21 @@
   "message": "Remove"
  },
  "notes": {
-  "message": "Works only with Dark Reader's Dynamic mode (Filter/Static modes ignore the lock). Add-ons can't run on about: pages, addons.mozilla.org, etc."
- },
- "toastOff": {
-  "message": "Dark Reader off (this page)"
- },
- "toastOffSite": {
-  "message": "Dark Reader off (site remembered)"
+  "message": "Dark Reader is kept off by default using darkreader-lock, Dark Reader's official opt-out for sites. Works only with Dark Reader's Dynamic mode (Filter/Static modes ignore the lock, so pages stay dark). While off, Dark Reader's own popup still shows the site as enabled. Add-ons can't run on about: pages, addons.mozilla.org, etc."
  },
  "toastOn": {
-  "message": "Turning Dark Reader back on…"
+  "message": "Turning Dark Reader on…"
  },
- "toastNotRunning": {
-  "message": "Dark Reader isn't running"
+ "toastOff": {
+  "message": "Dark Reader off"
+ },
+ "toastNotFound": {
+  "message": "Dark Reader not found"
  },
  "toastNotDynamic": {
-  "message": "Dark Reader isn't in Dynamic mode; can't toggle"
+  "message": "Only Dark Reader's Dynamic mode is supported"
  },
- "toastReload": {
-  "message": "Reloading…"
+ "toastSiteLocked": {
+  "message": "This site has disabled Dark Reader"
  }
 }

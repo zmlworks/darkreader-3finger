@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html><head><title>dr3f e2e</title>
-<script src="drstub-page.js"></script>
+<script>window.__atHead = { fallback: !!document.querySelector(".darkreader--fallback"), sysDark: matchMedia("(prefers-color-scheme: dark)").matches };
+if (!/[?&]real=1/.test(location.search)) document.write('<script src="drstub-page.js"><\/script>');</script>
 </head><body style="margin:0;height:1500px"><h1>e2e</h1>
 <script>
 // 実拡張（web-ext run で一時読み込み）に対して、ページから合成 TouchEvent を送り、状態をサーバーに報告する。
+// ?real=1 なら Dark Reader スタブを使わない（本物の Dark Reader を入れたプロファイル用）。
+// ?remember=1 は「オンにしたサイトを記憶する」がオンの拡張で、sitemark.js の動的登録を確かめる。
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const report = (o) => fetch("/report", { method: "POST", body: JSON.stringify(o) });
+const REMEMBER = /[?&]remember=1/.test(location.search);
 const st = () => ({ dr: !!document.querySelector('meta[name="darkreader"]'), lock: !!document.querySelector('meta[name="darkreader-lock"]'),
-  lockInHead: !!document.head.querySelector('meta[name="darkreader-lock"]'), toast: !!document.querySelector("dr3f-toast"),
-  drlog: window.__drlog.slice(), step: +sessionStorage.step || 0, touch: typeof TouchEvent });
+  lockInHead: !!document.head.querySelector('meta[name="darkreader-lock"]'), mode: document.documentElement.getAttribute("data-darkreader-mode"),
+  fallback: !!document.querySelector(".darkreader--fallback"), toast: !!document.querySelector("dr3f-toast"),
+  bg: getComputedStyle(document.documentElement).backgroundColor, drlog: (window.__drlog || []).slice(), step: +sessionStorage.step || 0,
+  ss: sessionStorage.getItem("dr3f:on"), sitemark: document.documentElement.getAttribute("data-e2e-sitemark"), atHead: window.__atHead, first: window.__first });
+// 最初の描画フレームの状態（ちらつき確認用）
+requestAnimationFrame(() => { window.__first = { lock: !!document.querySelector('meta[name="darkreader-lock"]'), fallback: !!document.querySelector(".darkreader--fallback"),
+  bg: getComputedStyle(document.documentElement).backgroundColor }; });
 async function tap(n) {
   const el = document.body;
   const mk = (i) => new Touch({ identifier: i, target: el, clientX: 100 + i * 60, clientY: 200 });
@@ -18,14 +27,23 @@ async function tap(n) {
   el.dispatchEvent(new TouchEvent("touchend", { bubbles: true, touches: [], changedTouches: down }));
 }
 addEventListener("load", async () => {
-  await sleep(300);
+  await sleep(+new URLSearchParams(location.search).get("wait") || 600);
   const step = +sessionStorage.step || 0;
   sessionStorage.step = step + 1;
   try {
-    if (step === 0) { await report({ name: "loaded", ...st() }); await tap(2); await sleep(100); await report({ name: "2-finger ignored", ...st() });
-      await tap(3); await sleep(150); await report({ name: "after 3-finger tap", ...st() }); location.reload(); }
-    else if (step === 1) { await report({ name: "after reload", ...st() }); await tap(3); await sleep(1500); await report({ name: "NO RELOAD HAPPENED", ...st() }); }
-    else if (step === 2) { await report({ name: "after re-enable reload", ...st() }); await report({ name: "done" }); }
+    if (step === 0) { await report({ name: "loaded (default off)", ...st() }); await tap(2); await sleep(100); await report({ name: "2-finger ignored", ...st() });
+      if (/[?&]probe=1/.test(location.search)) { // ロックを外すだけでは Dark Reader は再適用しないことの確認
+        document.querySelectorAll('meta[name="darkreader-lock"]').forEach((n) => n.remove()); await sleep(3000);
+        await report({ name: "lock removed without reload", ...st() }); }
+      await tap(3); await sleep(1500); await report({ name: "NO RELOAD HAPPENED", ...st() }); }
+    else if (step === 1) { await report({ name: "after enable reload", ...st() });
+      if (REMEMBER) { sessionStorage.removeItem("dr3f:on"); location.reload(); return; }
+      await tap(3); await sleep(200); await report({ name: "after off tap", ...st() }); location.reload(); }
+    else if (step === 2) {
+      if (REMEMBER) { await report({ name: "remembered: dark from load without tab state", ...st() });
+        await tap(3); await sleep(200); await report({ name: "after off tap", ...st() }); sessionStorage.step = 99; location.reload(); return; }
+      await report({ name: "after reload (still off)", ...st() }); await report({ name: "done" }); }
+    else if (step === 99) { await report({ name: "after reload (unremembered, off)", ...st() }); await report({ name: "done" }); }
   } catch (e) { report({ name: "error", err: String(e) }); }
 });
 </script></body></html>

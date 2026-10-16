@@ -1,12 +1,12 @@
 {
   "name": "darkreader-3finger",
   "private": true,
-  "version": "1.0.0",
-  "description": "Toggle Dark Reader on the current page with a three-finger tap (Firefox for Android / desktop touch).",
+  "version": "1.1.0",
+  "description": "Keep Dark Reader off by default and turn it on for the current page with a three-finger tap (Firefox for Android / desktop touch).",
   "license": "MIT",
   "scripts": {
     "test": "node test/detector.test.cjs",
-    "test:browser": "/workspace/android/.pwvenv/bin/python test/integration.py",
+    "test:browser": "python3 test/integration.py",
     "lint": "web-ext lint -s src",
     "build": "sh build.sh"
   },

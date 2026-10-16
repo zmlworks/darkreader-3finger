@@ -76,6 +76,7 @@
     const bgApi = {
       runtime: { onMessage: { addListener: (l) => (bgListener = l) } },
       tabs: { sendMessage: (tabId, m, o) => deliver(o && o.frameId != null ? o.frameId : null, m) },
+      storage: window.browser.storage, // scripting は無い → sitemark.js の動的登録は integration.py 側で再現
     };
     new Function("browser", window.__DR3F_BG)(bgApi);
   }

@@ -3,11 +3,21 @@
 // - head が無ければ head ができるまで待って ready()
 // - ready(): isDRLocked() なら何もしない／でなければ meta[name=darkreader] を作り、head を監視してロック出現で removeDynamicTheme()
 // ?dr=filter ならフィルターモード（style#dark-reader-style と data-darkreader-mode=filter のみ、ロック無視）
+// ?fb=1 なら fallback.js（システムがダークのとき document_start に入る暗い仮スタイル。ロックを見つけた ready() で消える）も再現し、
+//        最初の描画フレームの時点で仮スタイルが残っていたかを __fbFirstFrame に記録する
+// ?delay=ms ならテーマの到着（バックグラウンドとの往復）を遅らせる（既定はマイクロタスク = 最悪ケース）
 (() => {
   const q = new URLSearchParams(location.search);
   const mode = q.get("dr") || "dynamic";
   const log = (s) => (window.__drlog = window.__drlog || []).push((window === window.top ? "top:" : "sub:") + s);
   if (mode === "none") return;
+  if (q.get("fb") === "1" && document.documentElement instanceof HTMLHtmlElement) { // fallback.js と同じ条件（Chromium の init script 時点では documentElement が無い）
+    const fb = document.createElement("style"); fb.className = "darkreader darkreader--fallback";
+    fb.textContent = "html,body,body :not(iframe){background-color:#181a1b!important;color:#e8e6e3!important}";
+    (document.head || document.documentElement).append(fb);
+    requestAnimationFrame(() => { window.__fbFirstFrame = !!document.querySelector(".darkreader--fallback"); window.__bgFirstFrame = getComputedStyle(document.documentElement).backgroundColor; });
+    log("fallback-inserted");
+  }
   let metaObserver;
   const css = "html,body{background:#111!important;color:#eee!important}";
   function removeDynamicTheme() {
@@ -25,7 +35,7 @@
       const st = document.createElement("style"); st.id = "dark-reader-style"; st.className = "darkreader"; st.textContent = css;
       document.head.appendChild(st); log("filter-applied"); return;
     }
-    if (document.querySelector('meta[name="darkreader-lock"]')) { log("locked-at-load"); return; }
+    if (document.querySelector('meta[name="darkreader-lock"]')) { document.querySelector(".darkreader--fallback")?.remove(); log("locked-at-load"); return; }
     const m = document.createElement("meta"); m.name = "darkreader"; m.content = "stub-" + Math.random(); document.head.appendChild(m);
     metaObserver = new MutationObserver(() => {
       if (document.querySelector('meta[name="darkreader-lock"]')) { metaObserver.disconnect(); removeDynamicTheme(); }
@@ -44,5 +54,6 @@
     }
   };
   log("headAtStart=" + !!document.head);
-  Promise.resolve().then(start);
+  const delay = +q.get("delay") || 0;
+  if (delay) setTimeout(start, delay); else Promise.resolve().then(start);
 })();

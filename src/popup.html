@@ -58,7 +58,6 @@
       label.card {
         cursor: pointer;
       }
-      input[type="radio"],
       input[type="checkbox"] {
         width: 24px;
         height: 24px;
@@ -103,15 +102,10 @@
   <body>
     <main>
       <h1 data-i18n="extName">Dark Reader 3本指トグル</h1>
-      <fieldset>
-        <legend data-i18n="actionLegend">3本指タップの動作</legend>
-        <label class="card"><span data-i18n="actionToggle">Dark Reader切替</span><input type="radio" name="action" value="toggle" /></label>
-        <label class="card"><span data-i18n="actionReload">ページ更新</span><input type="radio" name="action" value="reload" /></label>
-      </fieldset>
-      <label class="card"><span data-i18n="rememberLabel">オフにしたサイトを記憶する</span><input type="checkbox" id="remember" /></label>
+      <label class="card"><span data-i18n="rememberLabel">オンにしたサイトを記憶する</span><input type="checkbox" id="remember" /></label>
       <p class="hint" data-i18n="rememberHint"></p>
       <fieldset>
-        <legend data-i18n="sitesLegend">常にオフにするサイト</legend>
+        <legend data-i18n="sitesLegend">常にダークにするサイト</legend>
         <ul id="sites"></ul>
         <div class="empty" id="empty" data-i18n="sitesEmpty">（なし）</div>
       </fieldset>

@@ -1,6 +1,6 @@
 /* ポップアップ兼オプション画面。表示言語は Firefox の UI 言語に従う（_locales/ja|en）。 */
 const api = typeof browser !== "undefined" ? browser : chrome;
-const DEFAULTS = { action: "toggle", remember: false, sites: [] };
+const DEFAULTS = { rememberDark: false, darkSites: [] };
 
 document.documentElement.lang = /^ja/i.test(api.i18n.getUILanguage()) ? "ja" : "en";
 document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -22,8 +22,8 @@ function renderSites(sites) {
     const btn = document.createElement("button");
     btn.textContent = api.i18n.getMessage("remove");
     btn.addEventListener("click", async () => {
-      const { sites: cur } = await api.storage.local.get({ sites: [] });
-      await api.storage.local.set({ sites: cur.filter((h) => h !== host) });
+      const { darkSites: cur } = await api.storage.local.get({ darkSites: [] });
+      await api.storage.local.set({ darkSites: cur.filter((h) => h !== host) });
     });
     li.append(span, btn);
     ul.append(li);
@@ -32,16 +32,12 @@ function renderSites(sites) {
 
 async function load() {
   const s = await api.storage.local.get(DEFAULTS);
-  document.querySelectorAll('input[name="action"]').forEach((r) => (r.checked = r.value === s.action));
-  $("#remember").checked = !!s.remember;
-  renderSites(s.sites);
+  $("#remember").checked = !!s.rememberDark;
+  renderSites(s.darkSites);
 }
 
-document.querySelectorAll('input[name="action"]').forEach((r) =>
-  r.addEventListener("change", () => r.checked && api.storage.local.set({ action: r.value }))
-);
-$("#remember").addEventListener("change", (e) => api.storage.local.set({ remember: e.target.checked }));
+$("#remember").addEventListener("change", (e) => api.storage.local.set({ rememberDark: e.target.checked }));
 api.storage.onChanged.addListener((ch, area) => {
-  if (area === "local" && ch.sites) renderSites(ch.sites.newValue || []);
+  if (area === "local" && ch.darkSites) renderSites(ch.darkSites.newValue || []);
 });
 load();

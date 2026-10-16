@@ -3,28 +3,16 @@
   "message": "Dark Reader 3本指トグル"
  },
  "extDesc": {
-  "message": "3本指タップで、表示中のページの Dark Reader をオフ/オンします（Android 版 Firefox・タッチ対応 PC）。"
- },
- "title": {
-  "message": "3本指タップ"
- },
- "actionLegend": {
-  "message": "3本指タップの動作"
- },
- "actionToggle": {
-  "message": "Dark Reader切替"
- },
- "actionReload": {
-  "message": "ページ更新"
+  "message": "Dark Reader を普段はオフにしておき、3本指タップで表示中のページだけオンにします（Android 版 Firefox・タッチ対応 PC）。"
  },
  "rememberLabel": {
-  "message": "オフにしたサイトを記憶する（次回以降もオフ）"
+  "message": "オンにしたサイトを記憶する（次回以降もダーク）"
  },
  "rememberHint": {
-  "message": "オフのとき: このタブでこのサイトを開いている間だけオフ（再読み込み・サイト内の移動でもオフのまま）。"
+  "message": "オフのとき: オンにしたページは、このタブでそのサイトを開いている間だけダーク（再読み込み・サイト内の移動でもダークのまま）。もう一度 3本指タップでオフ。"
  },
  "sitesLegend": {
-  "message": "常にオフにするサイト"
+  "message": "常にダークにするサイト"
  },
  "sitesEmpty": {
   "message": "（なし）"
@@ -33,24 +21,21 @@
   "message": "削除"
  },
  "notes": {
-  "message": "Dark Reader の「動的」モードでのみ切り替えできます（フィルター/静的モードはロックに反応しません）。about: ページや addons.mozilla.org など、アドオンが動かないページでは使えません。"
- },
- "toastOff": {
-  "message": "Dark Reader オフ（このページ）"
- },
- "toastOffSite": {
-  "message": "Dark Reader オフ（このサイトを記憶）"
+  "message": "普段は Dark Reader をオフにしています（サイト向けの公式の目印 darkreader-lock を使用）。Dark Reader の「動的」モードでのみ使えます（フィルター/静的モードはロックに反応しないため常にダークのまま）。オフ中も Dark Reader のポップアップには「有効」と表示されます。about: ページや addons.mozilla.org など、アドオンが動かないページでは使えません。"
  },
  "toastOn": {
-  "message": "オンに戻します…"
+  "message": "Dark Reader オンにします…"
  },
- "toastNotRunning": {
-  "message": "Dark Readerが動いていません"
+ "toastOff": {
+  "message": "Dark Reader オフ"
+ },
+ "toastNotFound": {
+  "message": "Dark Readerが見つかりません"
  },
  "toastNotDynamic": {
-  "message": "Dark Readerが動的モードではないため切替できません"
+  "message": "Dark Reader の動的モードのみ対応しています"
  },
- "toastReload": {
-  "message": "ページを更新します…"
+ "toastSiteLocked": {
+  "message": "このサイトは Dark Reader を無効にしています"
  }
 }
