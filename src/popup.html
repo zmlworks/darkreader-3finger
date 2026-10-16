@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="extName">Dark Reader 3本指トグル</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Noto Sans JP", "Roboto", system-ui, sans-serif;
+      }
+      body {
+        margin: 0;
+        min-width: 300px;
+        background: #141311;
+        color: #f3efe6;
+        font-size: 17px;
+      }
+      main {
+        max-width: 520px;
+        margin: 0 auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+      }
+      fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      legend {
+        padding: 0;
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: #c9c2b6;
+      }
+      .card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 56px;
+        padding: 6px 14px;
+        box-sizing: border-box;
+        border: 1px solid #3a342c;
+        border-radius: 12px;
+        background: #1e1c19;
+      }
+      label.card {
+        cursor: pointer;
+      }
+      input[type="radio"],
+      input[type="checkbox"] {
+        width: 24px;
+        height: 24px;
+        flex: none;
+        accent-color: #e0b354;
+      }
+      .hint,
+      .notes {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #a9a196;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      li span {
+        overflow-wrap: anywhere;
+      }
+      button {
+        min-height: 44px;
+        min-width: 72px;
+        padding: 0 14px;
+        border: 1px solid #5a4f40;
+        border-radius: 10px;
+        background: #2a2621;
+        color: #f3efe6;
+        font: inherit;
+        font-size: 15px;
+      }
+      .empty {
+        color: #8d867c;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 data-i18n="extName">Dark Reader 3本指トグル</h1>
+      <fieldset>
+        <legend data-i18n="actionLegend">3本指タップの動作</legend>
+        <label class="card"><span data-i18n="actionToggle">Dark Reader切替</span><input type="radio" name="action" value="toggle" /></label>
+        <label class="card"><span data-i18n="actionReload">ページ更新</span><input type="radio" name="action" value="reload" /></label>
+      </fieldset>
+      <label class="card"><span data-i18n="rememberLabel">オフにしたサイトを記憶する</span><input type="checkbox" id="remember" /></label>
+      <p class="hint" data-i18n="rememberHint"></p>
+      <fieldset>
+        <legend data-i18n="sitesLegend">常にオフにするサイト</legend>
+        <ul id="sites"></ul>
+        <div class="empty" id="empty" data-i18n="sitesEmpty">（なし）</div>
+      </fieldset>
+      <p class="notes" data-i18n="notes"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+{
+ "extName": {
+  "message": "Dark Reader 3本指トグル"
+ },
+ "extDesc": {
+  "message": "3本指タップで、表示中のページの Dark Reader をオフ/オンします（Android 版 Firefox・タッチ対応 PC）。"
+ },
+ "title": {
+  "message": "3本指タップ"
+ },
+ "actionLegend": {
+  "message": "3本指タップの動作"
+ },
+ "actionToggle": {
+  "message": "Dark Reader切替"
+ },
+ "actionReload": {
+  "message": "ページ更新"
+ },
+ "rememberLabel": {
+  "message": "オフにしたサイトを記憶する（次回以降もオフ）"
+ },
+ "rememberHint": {
+  "message": "オフのとき: このタブでこのサイトを開いている間だけオフ（再読み込み・サイト内の移動でもオフのまま）。"
+ },
+ "sitesLegend": {
+  "message": "常にオフにするサイト"
+ },
+ "sitesEmpty": {
+  "message": "（なし）"
+ },
+ "remove": {
+  "message": "削除"
+ },
+ "notes": {
+  "message": "Dark Reader の「動的」モードでのみ切り替えできます（フィルター/静的モードはロックに反応しません）。about: ページや addons.mozilla.org など、アドオンが動かないページでは使えません。"
+ },
+ "toastOff": {
+  "message": "Dark Reader オフ（このページ）"
+ },
+ "toastOffSite": {
+  "message": "Dark Reader オフ（このサイトを記憶）"
+ },
+ "toastOn": {
+  "message": "オンに戻します…"
+ },
+ "toastNotRunning": {
+  "message": "Dark Readerが動いていません"
+ },
+ "toastNotDynamic": {
+  "message": "Dark Readerが動的モードではないため切替できません"
+ },
+ "toastReload": {
+  "message": "ページを更新します…"
+ }
+}

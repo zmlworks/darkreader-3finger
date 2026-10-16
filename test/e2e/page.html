@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><title>dr3f e2e</title>
+<script src="drstub-page.js"></script>
+</head><body style="margin:0;height:1500px"><h1>e2e</h1>
+<script>
+// 実拡張（web-ext run で一時読み込み）に対して、ページから合成 TouchEvent を送り、状態をサーバーに報告する。
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const report = (o) => fetch("/report", { method: "POST", body: JSON.stringify(o) });
+const st = () => ({ dr: !!document.querySelector('meta[name="darkreader"]'), lock: !!document.querySelector('meta[name="darkreader-lock"]'),
+  lockInHead: !!document.head.querySelector('meta[name="darkreader-lock"]'), toast: !!document.querySelector("dr3f-toast"),
+  drlog: window.__drlog.slice(), step: +sessionStorage.step || 0, touch: typeof TouchEvent });
+async function tap(n) {
+  const el = document.body;
+  const mk = (i) => new Touch({ identifier: i, target: el, clientX: 100 + i * 60, clientY: 200 });
+  const down = [];
+  for (let i = 0; i < n; i++) { const t = mk(i); down.push(t); el.dispatchEvent(new TouchEvent("touchstart", { bubbles: true, touches: [...down], changedTouches: [t] })); }
+  await sleep(60);
+  el.dispatchEvent(new TouchEvent("touchend", { bubbles: true, touches: [], changedTouches: down }));
+}
+addEventListener("load", async () => {
+  await sleep(300);
+  const step = +sessionStorage.step || 0;
+  sessionStorage.step = step + 1;
+  try {
+    if (step === 0) { await report({ name: "loaded", ...st() }); await tap(2); await sleep(100); await report({ name: "2-finger ignored", ...st() });
+      await tap(3); await sleep(150); await report({ name: "after 3-finger tap", ...st() }); location.reload(); }
+    else if (step === 1) { await report({ name: "after reload", ...st() }); await tap(3); await sleep(1500); await report({ name: "NO RELOAD HAPPENED", ...st() }); }
+    else if (step === 2) { await report({ name: "after re-enable reload", ...st() }); await report({ name: "done" }); }
+  } catch (e) { report({ name: "error", err: String(e) }); }
+});
+</script></body></html>

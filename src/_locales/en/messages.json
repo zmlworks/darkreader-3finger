@@ -1,0 +1,56 @@
+{
+ "extName": {
+  "message": "Dark Reader 3-Finger Toggle"
+ },
+ "extDesc": {
+  "message": "Turn Dark Reader off/on for the current page with a three-finger tap (Firefox for Android and touch-screen desktops)."
+ },
+ "title": {
+  "message": "Three-finger tap"
+ },
+ "actionLegend": {
+  "message": "Three-finger tap action"
+ },
+ "actionToggle": {
+  "message": "Toggle Dark Reader"
+ },
+ "actionReload": {
+  "message": "Reload page"
+ },
+ "rememberLabel": {
+  "message": "Remember sites I turn off (stay off next time)"
+ },
+ "rememberHint": {
+  "message": "When unchecked: off only while this site is open in this tab (stays off across reloads and in-site navigation)."
+ },
+ "sitesLegend": {
+  "message": "Sites kept off"
+ },
+ "sitesEmpty": {
+  "message": "(none)"
+ },
+ "remove": {
+  "message": "Remove"
+ },
+ "notes": {
+  "message": "Works only with Dark Reader's Dynamic mode (Filter/Static modes ignore the lock). Add-ons can't run on about: pages, addons.mozilla.org, etc."
+ },
+ "toastOff": {
+  "message": "Dark Reader off (this page)"
+ },
+ "toastOffSite": {
+  "message": "Dark Reader off (site remembered)"
+ },
+ "toastOn": {
+  "message": "Turning Dark Reader back on…"
+ },
+ "toastNotRunning": {
+  "message": "Dark Reader isn't running"
+ },
+ "toastNotDynamic": {
+  "message": "Dark Reader isn't in Dynamic mode; can't toggle"
+ },
+ "toastReload": {
+  "message": "Reloading…"
+ }
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="#1d1f24"/>
+  <!-- 三日月 -->
+  <circle cx="64" cy="50" r="30" fill="#f2c94c"/>
+  <circle cx="78" cy="40" r="26" fill="#1d1f24"/>
+  <!-- 3本指 -->
+  <circle cx="34" cy="100" r="11" fill="#e9eef5"/>
+  <circle cx="64" cy="94" r="11" fill="#e9eef5"/>
+  <circle cx="94" cy="100" r="11" fill="#e9eef5"/>
+</svg>
