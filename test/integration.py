@@ -91,6 +91,14 @@ def run(engine, pw, order, locale="en"):
           and "top:locked-at-load" in s["drlog"] and "top:applied" not in s["drlog"] and s["bg"] != DARK and s["mode"] is None, s)
     check(tag + "head did not exist at document_start", "top:headAtStart=false" in s["drlog"], s["drlog"])
 
+    # 1.1.1: オフの間にページがロックを消しても入れ直す（head の作り直しも）
+    page.evaluate("() => document.querySelector('meta[data-dr3f]').remove()"); page.wait_for_timeout(30); s = state(page)
+    check(tag + "page removed our lock → re-inserted into head", s["lock"] and s["lockInHead"] and not s["dr"], s)
+    page.evaluate("() => { const h = document.createElement('head'); document.documentElement.replaceChild(h, document.head); }"); page.wait_for_timeout(30); s = state(page)
+    check(tag + "page replaced <head> → lock moved into the new head", s["lock"] and s["lockInHead"] and not s["dr"], s)
+    page.evaluate("() => { document.head.innerHTML = ''; }"); page.wait_for_timeout(30); s = state(page)
+    check(tag + "page cleared head.innerHTML → lock back", s["lock"] and s["lockInHead"], s)
+
     for name, o in [("2 fingers", {"n": 2}), ("4 fingers", {"n": 4}), ("held 600ms", {"dur": 600}),
                     ("moved 40px", {"move": 40}), ("slow stagger 200ms each", {"stagger": 200})]:
         tap(**o); page.wait_for_timeout(50); s = state(page)

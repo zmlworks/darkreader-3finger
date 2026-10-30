@@ -62,36 +62,56 @@
     m.setAttribute("data-dr3f", "");
     lockEl = m;
     placeLock(m);
+    startGuard();
   }
 
   // head がまだ無い（document_start）ときは documentElement に置き、head ができたら head へ移す。
   // Dark Reader の isDRLocked() は document.querySelector なので head の外でも効く。
   // 適用中の解除は document.head を監視する MutationObserver なので、最終的には head に入れておく。
   function placeLock(m) {
-    if (document.head) {
-      document.head.appendChild(m);
-      return;
-    }
-    if (document.documentElement) document.documentElement.appendChild(m);
-    const mo = new MutationObserver(() => {
-      if (lockEl !== m) return mo.disconnect();
-      if (!document.documentElement) return;
-      if (!m.isConnected) document.documentElement.appendChild(m);
-      if (document.head) {
-        mo.disconnect();
-        if (m.parentNode !== document.head) document.head.appendChild(m);
+    const parent = document.head || document.documentElement;
+    if (parent && m.parentNode !== parent) parent.appendChild(m);
+  }
+
+  // 1.1.1: オフの間はロックを守る。ページ（SPA など）が head を書き換えたり作り直したりしてロックが外れると、
+  // その後に届いた Dark Reader のテーマが適用されてしまうので、外れたら入れ直す。
+  // 監視するのは document / documentElement / head の直下だけ（subtree は見ない）。
+  let guard = null;
+  let guardFixes = 0;
+  const GUARD_MAX = 200; // ページがロックを消し続ける場合の無限の取り合いを避ける
+  function guardTargets() {
+    guard.disconnect();
+    guard.observe(document, { childList: true });
+    if (document.documentElement) guard.observe(document.documentElement, { childList: true });
+    if (document.head) guard.observe(document.head, { childList: true });
+  }
+  function guardCheck() {
+    if (!guard) return;
+    const m = lockEl;
+    if (!m) return stopGuard();
+    const want = document.head || document.documentElement;
+    if (want && m.parentNode !== want) {
+      if (++guardFixes > GUARD_MAX) {
+        console.warn("dr3f: the page keeps removing the darkreader-lock meta; giving up");
+        return stopGuard();
       }
-    });
-    mo.observe(document, { childList: true, subtree: true });
-    document.addEventListener("DOMContentLoaded", () => {
-      mo.disconnect();
-      if (lockEl !== m) return;
-      if (!m.isConnected) (document.head || document.documentElement).appendChild(m);
-      else if (document.head && m.parentNode !== document.head) document.head.appendChild(m);
-    }, { once: true });
+      placeLock(m);
+    }
+    guardTargets();
+  }
+  function startGuard() {
+    if (guard) return;
+    guard = new MutationObserver(guardCheck);
+    guardTargets();
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", guardCheck, { once: true });
+  }
+  function stopGuard() {
+    if (guard) guard.disconnect();
+    guard = null;
   }
 
   function removeLock() {
+    stopGuard();
     if (lockEl) lockEl.remove();
     lockEl = null;
     document.querySelectorAll(OUR_LOCK_SEL).forEach((n) => n.remove());
@@ -181,8 +201,14 @@
 
   const broadcast = () => api.runtime.sendMessage({ type: "dr3f:broadcast", dark }).catch(() => {});
 
+  // 1.1.1: 記憶したサイトの追加・削除はバックグラウンドで順番に行う（複数のタブやポップアップから同時に
+  // 読み書きすると、片方の変更が消えるため）。バックグラウンドに届かないときだけ、ここで直接書く。
   async function saveSite(add) {
     if (!HOST) return;
+    try {
+      const r = await api.runtime.sendMessage({ type: "dr3f:saveSite", add: !!add });
+      if (r && r.ok) return;
+    } catch (e) {}
     const { darkSites } = await api.storage.local.get({ darkSites: [] });
     if (add === darkSites.includes(HOST)) return;
     const next = darkSites.filter((h) => h !== HOST);
@@ -316,5 +342,5 @@
   on("touchcancel", "cancel");
 
   // テスト用フック（ページからは見えない isolated world 内の変数）
-  DR3F._content = { onTap, toast, insertLock, removeLock, ourLock, isDark: () => dark };
+  DR3F._content = { onTap, toast, insertLock, removeLock, ourLock, isDark: () => dark, saveSite, guarding: () => !!guard };
 })();

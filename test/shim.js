@@ -28,15 +28,15 @@
     if (d.kind === "reply") { const r = pending.get(d.id); pending.delete(d.id); r && r(d.res); return; }
     let res;
     if (d.kind === "hello" && IS_TOP) frames.set(d.from, e.source);
-    if (d.kind === "toBg" && IS_TOP) res = await bgDispatch(d.m, d.from);
+    if (d.kind === "toBg" && IS_TOP) res = await bgDispatch(d.m, d.from, d.url);
     if (d.kind === "toCS") res = await callListeners(d.m);
     e.source.postMessage({ __dr3fbus: 1, kind: "reply", id: d.id, res }, "*");
   });
   if (!IS_TOP) window.top.postMessage({ __dr3fbus: 1, kind: "hello", from: fid }, "*");
   let bgListener = null;
-  async function bgDispatch(m, from) {
+  async function bgDispatch(m, from, url) {
     window.__log.push("bg<-" + from + ":" + m.type);
-    return bgListener ? bgListener(m, { tab: { id: 1 }, frameId: from }) : undefined;
+    return bgListener ? bgListener(m, { tab: { id: 1 }, frameId: from, url: from === 0 ? location.href : url }) : undefined;
   }
   async function deliver(target, m) {
     const wins = target == null ? [...frames.entries()] : [[target, frames.get(target)]];
@@ -67,7 +67,7 @@
       onChanged: { addListener: (l) => changeL.push(l) },
     },
     runtime: {
-      sendMessage: async (m) => (IS_TOP ? bgDispatch(m, 0) : rpc(window.top, { kind: "toBg", m })),
+      sendMessage: async (m) => (IS_TOP ? bgDispatch(m, 0) : rpc(window.top, { kind: "toBg", m, url: location.href })),
       onMessage: { addListener: (l) => listeners.push(l) },
     },
   };

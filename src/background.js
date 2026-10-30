@@ -7,11 +7,48 @@
 const api = typeof browser !== "undefined" ? browser : chrome;
 const topDark = new Map(); // tabId → boolean（バックグラウンドが休止すると消えるが、そのときはトップに問い合わせる）
 
+// ---- 記憶したサイト（darkSites）の追加・削除: ここで 1 つずつ順に読み書きする ----
+let siteQueue = Promise.resolve();
+function editSites(fn) {
+  const run = async () => {
+    const { darkSites } = await api.storage.local.get({ darkSites: [] });
+    const cur = Array.isArray(darkSites) ? darkSites : [];
+    const next = fn(cur);
+    if (next) await api.storage.local.set({ darkSites: next });
+    return { ok: true };
+  };
+  const p = siteQueue.then(run, run);
+  siteQueue = p.catch(() => {});
+  return p;
+}
+const withSite = (host, add) => (cur) => {
+  if (!host || add === cur.includes(host)) return null;
+  const next = cur.filter((h) => h !== host);
+  if (add) next.push(host);
+  return next;
+};
+const hostOf = (url) => {
+  try {
+    return new URL(url).hostname;
+  } catch (e) {
+    return "";
+  }
+};
+
 api.runtime.onMessage.addListener((m, sender) => {
+  if (!m || typeof m.type !== "string") return;
+  // ポップアップ（拡張機能のページ。sender.tab が無い）からの削除
+  if (m.type === "dr3f:removeSite") {
+    if (!sender || sender.tab || sender.id !== api.runtime.id || typeof m.host !== "string") return;
+    return editSites(withSite(m.host, false));
+  }
   const tabId = sender && sender.tab && sender.tab.id;
-  if (!m || tabId == null || tabId < 0) return;
+  if (tabId == null || tabId < 0) return;
   const isTop = sender.frameId === 0;
   switch (m.type) {
+    case "dr3f:saveSite": // トップフレームの content script から（ホストは送り主の URL から取る）
+      if (!isTop || !hostOf(sender.url)) return Promise.resolve({ ok: false }); // content script が直接書く
+      return editSites(withSite(hostOf(sender.url), !!m.add));
     case "dr3f:tap":
       api.tabs.sendMessage(tabId, { type: "dr3f:tap" }, { frameId: 0 }).catch(() => {});
       return;

@@ -22,6 +22,11 @@ function renderSites(sites) {
     const btn = document.createElement("button");
     btn.textContent = api.i18n.getMessage("remove");
     btn.addEventListener("click", async () => {
+      // 1.1.1: 読み書きはバックグラウンドで順番に（タブからの追加と同時になっても消えないように）
+      try {
+        const r = await api.runtime.sendMessage({ type: "dr3f:removeSite", host });
+        if (r && r.ok) return;
+      } catch (e) {}
       const { darkSites: cur } = await api.storage.local.get({ darkSites: [] });
       await api.storage.local.set({ darkSites: cur.filter((h) => h !== host) });
     });
